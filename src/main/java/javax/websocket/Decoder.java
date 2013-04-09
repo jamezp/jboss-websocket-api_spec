@@ -47,12 +47,32 @@ import java.nio.ByteBuffer;
 /**
  * The Decoder interface holds member interfaces that define how a developer can provide
  * the web socket container a way web socket messages into developer defined custom objects.
- * The websocket implementation creates a new instance of the decoder per endpoint instance per connection.
+ * The websocket implementation creates a new instance of the decoder per endpoint 
+ * instance per connection.
+ * The lifecycle of the Decoder instance is governed by the container calls to the
+ * {@link Decoder#init(javax.websocket.EndpointConfig)} and {@link Decoder#destroy() }
+ * methods.
  *
  * @author dannycoward
- * @since DRAFT 002
  */
 public interface Decoder {
+    
+    /**
+     * This method is called with the endpoint configuration object of the
+     * endpoint this decoder is intended for when
+     * it is about to be brought into service.
+     * 
+     * @param config the endpoint configuration object when being brought into 
+     * service
+     */
+    void init(EndpointConfig config);
+    
+    /**
+      * This method is called when the decoder is about to be removed
+      * from service in order that any resources the encoder used may 
+      * be closed gracefully.
+      */
+    void destroy();
 
     /**
      * This interface defines how a custom object (of type T) is decoded from a web socket message in
@@ -75,6 +95,7 @@ public interface Decoder {
          * @return whether or not the bytes can be decoded by this decoder.
          */
         boolean willDecode(ByteBuffer bytes);
+        
     }
 
     /**
@@ -90,6 +111,8 @@ public interface Decoder {
          * @return the decoded object.
          */
         T decode(InputStream is) throws DecodeException, IOException;
+        
+
     }
 
     /**
@@ -112,6 +135,8 @@ public interface Decoder {
          * @return whether this decoder can decoded the supplied string.
          */
         boolean willDecode(String s);
+        
+
     }
 
     /**
@@ -127,5 +152,6 @@ public interface Decoder {
          * @return the instance of the object that is the decoded web socket message.
          */
         T decode(Reader reader) throws DecodeException, IOException;
+        
     }
 }

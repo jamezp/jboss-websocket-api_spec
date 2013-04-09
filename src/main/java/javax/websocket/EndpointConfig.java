@@ -49,28 +49,27 @@ import java.util.Map;
  * the URI signifies the URI of the server to which the client endpoint will attempt to connect.
  *
  * @author dannycoward
- * @since DRAFT 001
  */
-public interface EndpointConfiguration {
+public interface EndpointConfig {
 
     /**
-     * Return the Encoder implementations configured. These
-     * will be used by the container to encode custom objects passed into
+     * Return the Encoder implementation classes configured. These
+     * will be instantiated by the container to encode custom objects passed into
      * the send() methods on remote endpoints.
      *
-     * @return the encoders, an empty list if none.
+     * @return the encoder implementation classes, an empty list if none.
      */
-    List<Encoder> getEncoders();
+    List<Class<? extends Encoder>> getEncoders();
 
     /**
-     * Return the Decoder implementations configured. These
-     * will be used by the container to decode incoming messages
-     * into the expected custom objects on {@link MessageHandler.Basic#onMessage(Object)}
+     * Return the Decoder implementation classes configured. These
+     * will be instantiated by the container to decode incoming messages
+     * into the expected custom objects on {@link MessageHandler.Whole#onMessage(Object)}
      * callbacks.
      *
-     * @return the decoders, the empty list if none.
+     * @return the decoder implementation classes, the empty list if none.
      */
-    List<Decoder> getDecoders();
+    List<Class<? extends Decoder>> getDecoders();
     
     /**
      * This method returns a modifiable Map that the developer may use to store application

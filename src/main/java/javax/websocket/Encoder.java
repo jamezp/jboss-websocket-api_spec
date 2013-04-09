@@ -48,16 +48,35 @@ import java.nio.ByteBuffer;
  * The Encoder interface defines how developers can provide a way to convert
  * their custom objects into web socket messages. The Encoder interface contains
  * subinterfaces that allow encoding algorithms to encode custom objects to: text,
- * binary data, character
- * stream and write to an output stream.
- * The websocket implementation creates a new instance of the encoder per endpoint instance per connection.
- * This means that each encoder instance has at most one calling thread at a time.
+ * binary data, character stream and write to an output stream.
+ * The websocket implementation creates a new instance of the encoder per 
+ * endpoint instance per connection. This means that each encoder instance has 
+ * at most one calling thread at a time.
+ * The lifecycle of the Encoder instance is governed by the container calls to the
+ * {@link Encoder#init(javax.websocket.EndpointConfig)} and {@link Encoder#destroy() }
+ * methods.
  *
  * @author dannycoward
- * @since DRAFT 002
  */
 public interface Encoder {
 
+    /**
+     * This method is called with the endpoint configuration object of the
+     * endpoint this encoder is intended for when
+     * it is about to be brought into service.
+     * 
+     * @param config the endpoint configuration object when being brought into 
+     * service
+     */
+     void init(EndpointConfig config);
+     
+     /**
+      * This method is called when the encoder is about to be removed
+      * from service in order that any resources the encoder used may 
+      * be closed gracefully.
+      */
+     void destroy();
+     
     /**
      * This interface defines how to provide a way to convert a custom
      * object into a text message.
@@ -72,6 +91,7 @@ public interface Encoder {
          * @return the encoded object as a string.
          */
         String encode(T object) throws EncodeException;
+        
     }
 
     /**
@@ -79,7 +99,6 @@ public interface Encoder {
      * that want to write the encoded object to a character stream.
      *
      * @param <T> the type of the object this encoder can encode to a CharacterStream.
-     * @since DRAFT 006 / EDR
      */
     interface TextStream<T> extends Encoder {
         /**
@@ -118,7 +137,6 @@ public interface Encoder {
      * that want to write the encoded object to a binary stream.
      *
      * @param <T> the type of the object this encoder can encode.
-     * @since DRAFT 006 / EDR
      */
     interface BinaryStream<T> extends Encoder {
         /**

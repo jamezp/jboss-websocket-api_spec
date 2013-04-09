@@ -43,10 +43,10 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * A class encapsulating the reason why a web socket has been closed, or why it is being asked to
- * close. Note the acceptable uses of codes and reason phrase defined in RFC 6455.
+ * close. Note the acceptable uses of codes and reason phrase are defined in more detail by 
+ * <a href="http://tools.ietf.org/html/rfc6455">RFC 6455</a>.
  *
  * @author dannycoward
- * @since DRAFT 001
  */
 public class CloseReason {
 
@@ -57,8 +57,8 @@ public class CloseReason {
      * Creates a reason for closing a web socket connection with the given
      * code and reason phrase.
      *
-     * @param closeCode    the close code, may not be null
-     * @param reasonPhrase the reason phrase, may be null. 
+     * @param closeCode    the close code, may not be {@code null}
+     * @param reasonPhrase the reason phrase, may be {@code null}. 
      */
     public CloseReason(CloseReason.CloseCode closeCode, String reasonPhrase) {
         if (closeCode == null) {
@@ -233,12 +233,12 @@ public class CloseReason {
          *
          * @param code the integer code number
          * @return a new CloseCode with the given code number
+         * @throws IllegalArgumentException if the code is not a valid close code
          */
         public static CloseReason.CloseCode getCloseCode(final int code) {
             if (code < 1000 || code > 4999) {
                 throw new IllegalArgumentException("Invalid code: " + code);
             }
-
             switch (code) {
                 case 1000:
                     return CloseReason.CloseCodes.NORMAL_CLOSURE;

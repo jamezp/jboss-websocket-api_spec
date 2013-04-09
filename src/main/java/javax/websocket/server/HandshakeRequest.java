@@ -45,11 +45,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The handshake request represents the web socket defined Http request that for the opening
- * handshake of a web socket session.
+ * The handshake request represents the web socket defined Http GET request 
+ * for the opening handshake of a web socket session.
  *
  * @author dannycoward
- * @since DRAFT 003
  */
 public interface HandshakeRequest {
     /**
@@ -78,7 +77,8 @@ public interface HandshakeRequest {
     Map<String, List<String>> getHeaders();
 
     /**
-     * Return the authenticated user or null if no user is authenticated for this handshake.
+     * Return the authenticated user or {@code null} if no user is authenticated 
+     * for this handshake.
      *
      * @return the user principal.
      */
@@ -92,18 +92,25 @@ public interface HandshakeRequest {
     URI getRequestURI();
 
     /**
-     * Checks whether the current user is in the given role.
+     * Checks whether the current user is in the given role.  Roles and role 
+     * membership can be defined using deployment descriptors of the containing
+     * WAR file, if running in a Java EE web container. If the user has 
+     * not been authenticated, the method returns {@code false}. 
      *
-     * @param role the role being checked
-     * @return whether the user is in the role
+     * @param role the role being checked.
+     * @return whether the authenticated user is in the role, or false if the user has not
+     * been authenticated.
      */
     boolean isUserInRole(String role);
 
     /**
-     * Return a reference to the HttpSession that the web socket handshake that started this
-     * conversation was part of, if applicable.
+     * Return a reference to the HttpSession that the web socket handshake that 
+     * started this conversation was part of, if the implementation
+     * is part of a Java EE web container.
      *
-     * @return the http session.
+     * @return the http session or {@code null} if either the websocket
+     * implementation is not part of a Java EE web container, or there is
+     * no HttpSession associated with the opening handshake request.
      */
     Object getHttpSession();
 
@@ -117,7 +124,7 @@ public interface HandshakeRequest {
     /**
      * Return the query string associated with the request.
      *
-     * @return the query string≥
+     * @return the query string.
      */
     String getQueryString();
 }

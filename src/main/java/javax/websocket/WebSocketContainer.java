@@ -39,16 +39,24 @@
  */
 package javax.websocket;
 
+import java.io.*;
 import java.net.URI;
 import java.util.Set;
-import java.io.*;
 
 /**
- * A WebSocketContainer is an implementation provided object that allows the developer to
- * initiate a web socket handshake from the provided endpoint.
+ * A WebSocketContainer is an implementation provided object that provides applications
+ * a view on the container running it. The WebSocketContainer container various
+ * configuration parameters that control default session and buffer properties
+ * of the endpoints it contains. It also allows the developer to
+ * deploy websocket client endpoints by initiating a web socket handshake from 
+ * the provided endpoint to a supplied URI where the peer endpoint is presumed to
+ * reside. 
+ *
+ * <p>A WebSocketContainer may be accessed by concurrent threads, so
+ * implementations must ensure the integrity of its mutable attributes in such 
+ * circumstances.  
  *
  * @author dannycoward
- * @since DRAFT 001
  */
 public interface WebSocketContainer {
 
@@ -73,22 +81,75 @@ public interface WebSocketContainer {
     void setAsyncSendTimeout(long timeoutmillis);
 
     /**
-     * Connect the supplied annotated object to its server. The supplied object must be a
+     * Connect the supplied annotated endpoint instance to its server. The supplied 
+     * object must be a class decorated with the class level
+     * {@link javax.websocket.server.ServerEndpoint} annotation. This method 
+     * blocks until the connection is established, or throws an error if either 
+     * the connection could not be made or there was a problem with the supplied 
+     * endpoint class. If the developer uses this method to deploy the client
+     * endpoint, services like dependency injection that are supported, for 
+     * example, when the implementation is part of the Java EE platform
+     * may not be available. If the client endpoint uses dependency injection,
+     * use {@link WebSocketContainer#connectToServer(java.lang.Class, java.net.URI)}
+     * instead.
+     *
+     * @param annotatedEndpointInstance the annotated websocket client endpoint 
+     * instance.
+     * @param path the complete path to the server endpoint.
+     * @return the Session created if the connection is successful.
+     * @throws DeploymentException if the annotated endpoint instance is not valid.
+     * @throws IOException if there was a network or protocol problem that 
+     * prevented the client endpoint being connected to its server.
+     * @throws IllegalStateException if called during the deployment phase
+     * of the containing application.
+     */
+    Session connectToServer(Object annotatedEndpointInstance, URI path) throws DeploymentException, IOException;             
+         
+    /**
+     * Connect the supplied annotated endpoint to its server. The supplied object must be a
      * class decorated with the class level
-     * {@link javax.websocket.server.WebSocketEndpoint javax.websocket.server.WebSocketEndpoint} annotation. This method blocks until the connection
+     * {@link javax.websocket.server.ServerEndpoint} annotation. This method blocks until the connection
      * is established, or throws an error if either the connection could not be made or there
      * was a problem with the supplied endpoint class.
      *
-     * @param annotatedEndpointClass the annotated websocket client endpoint with {@link WebSocketClient} annotation.
+     * @param annotatedEndpointClass the annotated websocket client endpoint.
      * @param path                   the complete path to the server endpoint.
      * @return the Session created if the connection is successful.
-     * @throws DeploymentException if the annotated endpoint class is not valid.
-     * @throws IOException if there was a network or protocol problem that prevented the client endpoint being connected to its server.
+     * @throws DeploymentException if the class is not a valid annotated endpoint class.
+     * @throws IOException if there was a network or protocol problem that 
+     * prevented the client endpoint being connected to its server.
+     * @throws IllegalStateException if called during the deployment phase
+     * of the containing application.
      */
     Session connectToServer(Class<?> annotatedEndpointClass, URI path) throws DeploymentException, IOException;
 
+    
     /**
-     * Connect the supplied programmatic endpoint to its server with the given configuration. This method blocks until the connection
+     * Connect the supplied programmatic client endpoint instance to its server 
+     * with the given configuration. This method blocks until the connection
+     * is established, or throws an error if the connection could not be made. 
+     * If the developer uses this method to deploy the client
+     * endpoint, services like dependency injection that are supported, for 
+     * example, when the implementation is part of the Java EE platform
+     * may not be available. If the client endpoint uses dependency injection,
+     * use {@link WebSocketContainer#connectToServer(java.lang.Class, javax.websocket.ClientEndpointConfig, java.net.URI) }
+     * instead.
+     *
+     * @param endpointInstance the programmatic client endpoint instance {@link Endpoint}.
+     * @param path          the complete path to the server endpoint.
+     * @param cec           the configuration used to configure the programmatic endpoint.
+     * @return the Session created if the connection is successful.
+     * @throws DeploymentException if the configuration is not valid
+     * @throws IOException if there was a network or protocol problem that 
+     * prevented the client endpoint being connected to its server
+     * @throws IllegalStateException if called during the deployment phase
+     * of the containing application.
+     */
+    Session connectToServer(Endpoint endpointInstance, ClientEndpointConfig cec, URI path) throws DeploymentException, IOException;
+    
+    /**
+     * Connect the supplied programmatic endpoint to its server with the given 
+     * configuration. This method blocks until the connection
      * is established, or throws an error if the connection could not be made.
      *
      * @param endpointClass the programmatic client endpoint class {@link Endpoint}.
@@ -97,8 +158,10 @@ public interface WebSocketContainer {
      * @return the Session created if the connection is successful.
      * @throws DeploymentException if the configuration is not valid
      * @throws IOException if there was a network or protocol problem that prevented the client endpoint being connected to its server
+     * @throws IllegalStateException if called during the deployment phase
+     * of the containing application.
      */
-    Session connectToServer(Class<? extends Endpoint> endpointClass, ClientEndpointConfiguration cec, URI path) throws DeploymentException, IOException;
+    Session connectToServer(Class<? extends Endpoint> endpointClass, ClientEndpointConfig cec, URI path) throws DeploymentException, IOException;
 
 
 
@@ -107,7 +170,7 @@ public interface WebSocketContainer {
      * container will be closed if it has been inactive. A value that is
      * 0 or negative indicates the sessions will never timeout due to inactivity.
      * The value may be overridden on a per session basis using
-     * {@link Session#setMaxIdleTimeout(long) 
+     * {@link Session#setMaxIdleTimeout(long) }
      *
      * @return the default number of milliseconds after which an idle session in this container
      * will be closed
@@ -119,7 +182,7 @@ public interface WebSocketContainer {
      * container will be closed if it has been inactive. A value that is
      * 0 or negative indicates the sessions will never timeout due to inactivity.
      * The value may be overridden on a per session basis using
-     * {@link Session#setMaxIdleTimeout(long) 
+     * {@link Session#setMaxIdleTimeout(long) }
      *
      * @param timeout the maximum time in milliseconds.
      */

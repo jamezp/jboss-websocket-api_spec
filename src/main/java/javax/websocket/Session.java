@@ -54,15 +54,20 @@ import java.util.Set;
  * the endpoint an open websocket session. The endpoint can then register interest in incoming
  * messages that are part of this newly created session by providing a MessageHandler to the
  * session, and can send messages to the other end of the conversation by means of the RemoteEndpoint object
- * obtained from this session.<br>
- * <p/>
- * Once the session is closed, it is no longer valid for use by applications. Calling any of
- * its methods once the session has been closed will result in an {@link java.lang.IllegalStateException} being thrown.
+ * obtained from this session.
+ *
+ * <p>Once the session is closed, it is no longer valid for use by applications. Calling any of
+ * its methods (with the exception of the close() methods) 
+ * once the session has been closed will result in an {@link java.lang.IllegalStateException} being thrown.
  * Developers should retrieve any information from the session during the
- * {@link Endpoint#onClose(javax.websocket.Session, javax.websocket.CloseReason) } method.
+ * {@link Endpoint#onClose} method. Following the convention of {@link java.io.Closeable}
+ * calling the Session close() methods after the Session has been closed has no
+ * effect.
+ * 
+ * <p>Session objects may be called by multiple threads. Implementations must
+ * ensure the integrity of the mutable properties of the session under such circumstances.
  *
  * @author dannycoward
- * @since DRAFT 001
  */
 public interface Session extends Closeable {
 
@@ -79,10 +84,10 @@ public interface Session extends Closeable {
      * of one message handler to handle incoming text messages a maximum of one message handler for
      * handling incoming binary messages, and a maximum of one for handling incoming pong
      * messages. For further details of which message handlers handle which of the native websocket
-     * message types please see {@link MessageHandler.Basic} and {@link MessageHandler.Async}.
-     * Adding more than one of any one type will result in a runtime exception.<br> 
-     * <br><br>
-     * See {@link Endpoint} for a usage example.
+     * message types please see {@link MessageHandler.Whole} and {@link MessageHandler.Partial}.
+     * Adding more than one of any one type will result in a runtime exception.
+     *
+     * <p>See {@link Endpoint} for a usage example.
      *
      * @param handler the MessageHandler to be added.
      * @throws IllegalStateException if there is already a MessageHandler registered for the same native
@@ -192,7 +197,7 @@ public interface Session extends Closeable {
     
     /**
      * Return a reference a RemoteEndpoint object representing the peer of this conversation
-     * that is able to send messages synchronously to the peer.
+     * that is able to send messages asynchronously to the peer.
      *
      * @return the remote endpoint.
      */
@@ -200,7 +205,7 @@ public interface Session extends Closeable {
     
     /**
      * Return a reference a RemoteEndpoint object representing the peer of this conversation
-     * that is able to send messages asynchronously to the peer.
+     * that is able to send messages synchronously to the peer.
      *
      * @return the remote endpoint.
      */
@@ -223,7 +228,11 @@ public interface Session extends Closeable {
     void close() throws IOException;
 
     /**
-     * Close the current conversation, giving a reason for the closure. Note the websocket 
+     * Close the current conversation, giving a reason for the closure. The close
+     * call causes the implementation to attempt notify the client of the close as
+     * soon as it can. This may cause the sending of unsent messages immediately
+     * prior to the close notification. After the close notification has been sent
+     * the implementation notifies the endpoint's onClose method. Note the websocket 
      * specification defines the
      * acceptable uses of status codes and reason phrases. If the application cannot
      * determine a suitable close code to use for the closeReason, it is recommended
@@ -282,7 +291,7 @@ public interface Session extends Closeable {
     Map<String, Object> getUserProperties();
 
     /**
-     * Return the authenticated user for this Session or null if no user is authenticated for this session.
+     * Return the authenticated user for this Session or {@code null} if no user is authenticated for this session.
      *
      * @return the user principal.
      */

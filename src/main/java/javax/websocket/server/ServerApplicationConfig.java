@@ -43,28 +43,29 @@ import java.util.Set;
 import javax.websocket.Endpoint;
 
 /**
- * Developers include implementations of ServerApplicationConfiguration in an archive containing
+ * Developers include implementations of ServerApplicationConfig in an archive containing
  * websocket endpoints (WAR file, or JAR file within the WAR file) in order to specify the websocket 
  * endpoints within the archive the implementation must deploy. There is a separate
  * method for programmatic endpoints and for annotated endpoints.
  *
  * @author dannycoward
  */
-public interface ServerApplicationConfiguration {
+public interface ServerApplicationConfig {
 
     /**
-     * Return a set of ServerEndpointConfiguration instances that the server container
+     * Return a set of ServerEndpointConfig instances that the server container
      * will use to deploy the programmatic endpoints. The set of Endpoint classes passed in to this method is
      * the set obtained by scanning the archive containing the implementation
-     * of this ServerApplicationConfiguration. This set passed in
-     * may be used the build the set of ServerEndpointConfiguration instances
+     * of this ServerApplicationConfig. This set passed in
+     * may be used the build the set of ServerEndpointConfig instances
      * to return to the container for deployment.
      *
-     * @param scanned the set of all the Endpoint classes in the archive containing
+     * @param endpointClasses the set of all the Endpoint classes in the archive containing
      *                the implementation of this interface.
-     * @return the set of ServerEndpointConfiguration s to deploy on the server.
+     * @return the non-null set of ServerEndpointConfig s to deploy on the server, using the empty set to
+     * indicate none.
      */
-    public Set<ServerEndpointConfiguration> getEndpointConfigurations(Set<Class<? extends Endpoint>> endpointClasses);
+    public Set<ServerEndpointConfig> getEndpointConfigs(Set<Class<? extends Endpoint>> endpointClasses);
 
     /**
      * Return a set of annotated endpoint classes that the server container
@@ -76,7 +77,8 @@ public interface ServerApplicationConfiguration {
      *
      * @param scanned the set of all the annotated endpoint classes in the archive containing
      *                the implementation of this interface.
-     * @return the set of annotated endpoint classes to deploy on the server.
+     * @return the non-null set of annotated endpoint classes to deploy on the server, using the empty
+     * set to indicate none.
      */
     Set<Class<?>> getAnnotatedEndpointClasses(Set<Class<?>> scanned);
 }

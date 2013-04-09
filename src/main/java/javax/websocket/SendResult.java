@@ -45,12 +45,11 @@ package javax.websocket;
  * and it carries an exception to indicate what the problem was.
  *
  * @author dannycoward
- * @since DRAFT 002
  */
-public class SendResult {
+final public class SendResult {
 
-    private Throwable exception;
-    private boolean isOK = true;
+    private final Throwable exception;
+    private final boolean isOK;
 
     /**
      * Construct a SendResult carrying an exception.
@@ -66,12 +65,14 @@ public class SendResult {
      * Construct a SendResult signifying a successful send carrying no exception.
      */
     public SendResult() {
+        this.exception = null;
+        this.isOK = true;
     }
 
     /**
      * The problem sending the message.
      *
-     * @return the problem.
+     * @return the problem or {@code null} if the send was successful.
      */
     public Throwable getException() {
         return exception;

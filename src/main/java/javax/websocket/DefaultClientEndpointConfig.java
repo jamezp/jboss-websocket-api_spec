@@ -45,26 +45,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The DefaultClientEndpointConfiguration is a concrete implementation of a client configuration. Developers
- * may subclass this class in order to provide their own custom configuration behaviors.
+ * The DefaultClientEndpointConfig is a concrete implementation of a client configuration. 
  *
  * @author dannycoward
  */
- final class DefaultClientEndpointConfiguration implements ClientEndpointConfiguration {
+ final class DefaultClientEndpointConfig implements ClientEndpointConfig {
     private List<String> preferredSubprotocols;
     private List<Extension> extensions;
-    private List<Encoder> encoders;
-    private List<Decoder> decoders;
+    private List<Class<? extends Encoder>> encoders;
+    private List<Class<? extends Decoder>> decoders;
     private Map<String, Object> userProperties = new HashMap<String, Object>();
-    private ClientEndpointConfigurator clientEndpointConfigurator;
+    private ClientEndpointConfig.Configurator clientEndpointConfigurator;
 
     
-    DefaultClientEndpointConfiguration(
+    DefaultClientEndpointConfig(
             List<String> preferredSubprotocols,
             List<Extension> extensions,
-            List<Encoder> encoders,
-            List<Decoder> decoders,
-            ClientEndpointConfigurator clientEndpointConfigurator) {
+            List<Class<? extends Encoder>> encoders,
+            List<Class<? extends Decoder>> decoders,
+            ClientEndpointConfig.Configurator clientEndpointConfigurator) {
         this.preferredSubprotocols = Collections.unmodifiableList(preferredSubprotocols);
         this.extensions = Collections.unmodifiableList(extensions);
         this.encoders = Collections.unmodifiableList(encoders);
@@ -104,7 +103,7 @@ import java.util.Map;
      * @return the encoder list.
      */
      @Override
-    public List<Encoder> getEncoders() {
+    public List<Class<? extends Encoder>> getEncoders() {
         return this.encoders;
     }
 
@@ -116,7 +115,7 @@ import java.util.Map;
      * @return the decoders to use.
      */
      @Override
-    public List<Decoder> getDecoders() {
+    public List<Class<? extends Decoder>> getDecoders() {
         return this.decoders;
     }
 
@@ -130,7 +129,7 @@ import java.util.Map;
     }
     
      @Override
-    public ClientEndpointConfigurator getClientEndpointConfigurator() {
+    public ClientEndpointConfig.Configurator getConfigurator() {
         return this.clientEndpointConfigurator;
     }
  
