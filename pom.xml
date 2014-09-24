@@ -10,12 +10,12 @@
   </parent>
 
   <groupId>org.jboss.spec.javax.websocket</groupId>
-  <artifactId>jboss-websocket-api_1.0_spec</artifactId>
-  <version>1.0.1.Final-SNAPSHOT</version>
+  <artifactId>jboss-websocket-api_1.1_spec</artifactId>
+  <version>1.1.0.Final-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Java(TM) API for WebSocket</name>
-  <description>JSR-356: Java(TM) API for WebSocket 1.0 classes</description>
+  <description>JSR-356: Java(TM) API for WebSocket 1.1 classes</description>
 
   <licenses>
     <license>
@@ -75,10 +75,10 @@
           <instructions>
             <Specification-Title>JSR 356: Java(TM) API for WebSocket Specification</Specification-Title>
             <Specification-Vendor>Oracle</Specification-Vendor>
-            <Specification-Version>1.0</Specification-Version>
+            <Specification-Version>1.1</Specification-Version>
 
             <Export-Package>
-              javax.websocket*;version=1.0
+              javax.websocket*;version=1.1
             </Export-Package>
           </instructions>
         </configuration>
@@ -102,7 +102,7 @@
             <manifestEntries>
               <Specification-Title>JSR 356: Java(TM) API for WebSocket Specification</Specification-Title>
               <Specification-Vendor>Oracle</Specification-Vendor>
-              <Specification-Version>1.0</Specification-Version>
+              <Specification-Version>1.1</Specification-Version>
             </manifestEntries>
           </archive>
         </configuration>
