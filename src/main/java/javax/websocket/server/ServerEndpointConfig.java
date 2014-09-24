@@ -72,7 +72,7 @@ public interface ServerEndpointConfig extends EndpointConfig {
 
     /**
      * Return the path for this endpoint configuration. The path is the URI or 
-     * URI-template relative to the websocket root of the server to which the 
+     * URI-template (level 1) relative to the websocket root of the server to which the 
      * endpoint using this configuration will be mapped. The path is always non-null
      * and always begins with a leading "/". 
      *
@@ -194,7 +194,7 @@ public interface ServerEndpointConfig extends EndpointConfig {
 
         /**
          * Called by the container after it has formulated a handshake response resulting from
-         * a well-formed handshake request. The container has already has already 
+         * a well-formed handshake request. The container has already 
          * checked that this configuration has a matching URI, determined the 
          * validity of the origin using the checkOrigin method, and filled
          * out the negotiated subprotocols and extensions based on this configuration.
